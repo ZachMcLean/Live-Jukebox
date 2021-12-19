@@ -48,7 +48,7 @@ function Center() {
       to-black ${color} h-80 text-white padding-8`}
       >
           {/* <img src=""/> */}
-          <h1>hello</h1>
+          <h1>Center</h1>
       </section>
     </div>
   );
