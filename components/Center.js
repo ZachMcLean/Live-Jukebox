@@ -2,8 +2,10 @@ import { ChevronDownIcon } from "@heroicons/react/outline";
 import { shuffle } from "lodash";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { playlistIdState } from '../atoms/playlistAtom';
+import { playlistState } from '../atoms/playlistAtom';
+import spotifyApi from "../lib/spotify";
 
 
 const colors = [
@@ -20,12 +22,22 @@ function Center() {
   // remember we can use the session to have access to the users profile picture and name
   const { data: session } = useSession();
   const [ color, setColor ] = useState(null);
-  const [ playlistId, setPlaylistId ] = useRecoilState(playlistIdState);
+  // change background color when playlist is clicked
+  const playlistId = useRecoilValue(playlistIdState);
+  const [ playlist, setPlaylist ] = useRecoilState(playlistState);
 
   useEffect(() => {
     // shuffle the array and pop a color off the top (this is like randomizing)
       setColor(shuffle(colors).pop());
-  }, []);
+  }, [playlistId]);
+
+  useEffect(() => {
+    spotifyApi.getPlaylist(playlistId).then((data) => {
+      setPlaylist((data.body));
+    }).catch((err) => console.log('ERROOOOR!!', err));
+  }, [spotifyApi, playlistId]);
+
+  console.log(playlist);
 
   return (
     <div className="flex-grow text-white">
