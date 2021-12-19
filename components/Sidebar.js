@@ -1,13 +1,33 @@
 import { HomeIcon, SearchIcon, LibraryIcon, PlusCircleIcon, HeartIcon, RssIcon } from '@heroicons/react/outline';
 import { signOut, useSession } from 'next-auth/react'
+//import spotifyApi from '../lib/spotify';
+import { useEffect, useState } from 'react';
+import useSpotify from '../hooks/useSpotify';
+
 
 
 function Sidebar() {
+    // setup the useSpotify() hook
+    const spotifyApi = useSpotify();
+
     // When we log the user out we want to be able to send them back to the login page
     // In order to do this we have to persist the state of the app
     // we will add a session provider to _app.js
     const { data: session, status } = useSession();
 
+
+    // Playlist Functionality
+    const [ playlists, setPlaylists ] = useState([]);
+    // when my sidebar mounts, this useEffect will run
+    useEffect(() => {
+        if (spotifyApi.getAccessToken()) {
+            spotifyApi.getUserPlaylists().then((data) => {
+                setPlaylists(data.body.items);
+            })
+        }
+    }, [session, spotifyApi]);
+
+    // console.log(playlists);
     return (
         <div className='text-gray-500 p-5 text-sm border-r border-gray-900 overflow-y-scroll scrollbar-hide h-screen '>
             <div className='space-y-4'>
@@ -50,20 +70,14 @@ function Sidebar() {
                  */}
 
                  {/* Playlists */}
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
-                 <p className='cursor-pointer hover:text-white'>Playlist name...</p>
+                 {playlists.map((playlist) => (
+                    <p key={playlist.id} className='cursor-pointer hover:text-white'>
+                       {playlist.name}
+                   </p>
+                 ))}
             </div>
         </div>
-
-    )
+    );
 }
 
 export default Sidebar
