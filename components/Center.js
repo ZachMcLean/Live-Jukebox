@@ -2,6 +2,9 @@ import { ChevronDownIcon } from "@heroicons/react/outline";
 import { shuffle } from "lodash";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useRecoilState } from 'recoil';
+import { playlistIdState } from '../atoms/playlistAtom';
+
 
 const colors = [
     "from-indigo-500",
@@ -17,6 +20,7 @@ function Center() {
   // remember we can use the session to have access to the users profile picture and name
   const { data: session } = useSession();
   const [ color, setColor ] = useState(null);
+  const [ playlistId, setPlaylistId ] = useRecoilState(playlistIdState);
 
   useEffect(() => {
     // shuffle the array and pop a color off the top (this is like randomizing)

@@ -1,5 +1,6 @@
 import '../styles/globals.css';
 import { SessionProvider } from "next-auth/react";
+import { RecoilRoot } from 'recoil';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }
 ) {
@@ -8,7 +9,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }
     // this will allow us to persist that login state throughout our app
     // We cannot use state functions like useSession without wrapping the app in a higher order component
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <RecoilRoot>
+        <Component {...pageProps} />
+      </RecoilRoot>
     </SessionProvider>
   );
 }

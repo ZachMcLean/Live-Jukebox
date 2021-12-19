@@ -3,10 +3,11 @@ import { signOut, useSession } from 'next-auth/react'
 //import spotifyApi from '../lib/spotify';
 import { useEffect, useState } from 'react';
 import useSpotify from '../hooks/useSpotify';
-
-
+import { useRecoilState } from 'recoil';
+import { playlistIdState } from '../atoms/playlistAtom';
 
 function Sidebar() {
+
     // setup the useSpotify() hook
     const spotifyApi = useSpotify();
 
@@ -14,6 +15,9 @@ function Sidebar() {
     // In order to do this we have to persist the state of the app
     // we will add a session provider to _app.js
     const { data: session, status } = useSession();
+
+    const [ playlistId, setPlaylistId ] = useRecoilState(playlistIdState);
+    console.log("You picked playlist >>> ", playlistId);
 
 
     // Playlist Functionality
@@ -26,6 +30,9 @@ function Sidebar() {
             })
         }
     }, [session, spotifyApi]);
+
+    
+    
 
     // console.log(playlists);
     return (
@@ -71,7 +78,7 @@ function Sidebar() {
 
                  {/* Playlists */}
                  {playlists.map((playlist) => (
-                    <p key={playlist.id} className='cursor-pointer hover:text-white'>
+                    <p key={playlist.id} onClick={() => setPlaylistId(playlist.id)} className='cursor-pointer hover:text-white'>
                        {playlist.name}
                    </p>
                  ))}
